@@ -1,7 +1,9 @@
 """
-Native GTK 3 graphical onboarding window for AutoInstallModMySummerCar.
+Native GTK graphical onboarding window for AutoInstallModMySummerCar.
 Provides a clean, intuitive first-setup UI for pasting and validating the Nexus Personal API Key.
 """
+
+from __future__ import annotations
 
 import asyncio
 import logging

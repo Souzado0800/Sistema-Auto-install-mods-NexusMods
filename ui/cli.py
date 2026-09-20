@@ -91,6 +91,21 @@ def parse_arguments(args: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Launch the graphical onboarding window in diagnostic mode to test keyboard, paste, and visibility controls.",
     )
+    parser.add_argument(
+        "--ui-preview",
+        action="store_true",
+        help="Launch the Storybook-like interactive component and design system gallery.",
+    )
+    parser.add_argument(
+        "--ui-demo",
+        action="store_true",
+        help="Launch the desktop GUI in mock data mode (sandbox testing without modifying files).",
+    )
+    parser.add_argument(
+        "--cli",
+        action="store_true",
+        help="Force headless CLI mode instead of launching the native desktop GUI.",
+    )
 
     # Game Configuration & Target
     parser.add_argument(

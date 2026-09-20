@@ -677,6 +677,15 @@ async def async_main(args: Any) -> int:
 
 def main() -> None:
     args = parse_arguments()
+
+    if getattr(args, "ui_preview", False):
+        from ui.desktop import run_desktop_app
+        sys.exit(run_desktop_app(preview=True))
+
+    if getattr(args, "ui_demo", False):
+        from ui.desktop import run_desktop_app
+        sys.exit(run_desktop_app(demo=True))
+
     exit_code = asyncio.run(async_main(args))
     sys.exit(exit_code)
 

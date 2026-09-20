@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "id": "graphite-mono",
+    "name": "Graphite Monochrome",
+    "author": "Antigravity Engineering",
+    "description": "Pure technical instrument panel with cool monochromatic slate and calibrated steel accents.",
+    "version": "1.0.0",
+    "is_dark": true,
+    "is_builtin": true
+  },
+  "appearance": {
+    "density": "compact",
+    "font_scale": 1.0,
+    "corner_radius": 4
+  },
+  "colors": {
+    "background": "#14171a",
+    "surface": "#1c2024",
+    "surface_raised": "#24292f",
+    "surface_hover": "#2d333b",
+    "surface_active": "#373e47",
+    "border": "#30363d",
+    "border_subtle": "#21262d",
+    "border_strong": "#484f58",
+    "text_primary": "#f0f6fc",
+    "text_secondary": "#8b949e",
+    "text_muted": "#57606a",
+    "text_disabled": "#424a53",
+    "accent": "#58a6ff"
+  },
+  "semantic": {
+    "installed": "#3fb950",
+    "update_available": "#d29922",
+    "unmanaged": "#79c0ff",
+    "failed": "#f85149",
+    "neutral": "#8b949e",
+    "cached": "#bc8cff",
+    "active_download": "#56d364"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "id": "workshop-light",
+    "name": "Workshop Light",
+    "author": "Antigravity Engineering",
+    "description": "High-contrast technical daylight theme: crisp white surfaces, clean zinc borders, and industrial terracotta accents.",
+    "version": "1.0.0",
+    "is_dark": false,
+    "is_builtin": true
+  },
+  "appearance": {
+    "density": "comfortable",
+    "font_scale": 1.0,
+    "corner_radius": 6
+  },
+  "colors": {
+    "background": "#f4f6f8",
+    "surface": "#ffffff",
+    "surface_raised": "#eaeef2",
+    "surface_hover": "#dfe4ea",
+    "surface_active": "#d0d7de",
+    "border": "#d0d7de",
+    "border_subtle": "#e1e4e8",
+    "border_strong": "#afb8c1",
+    "text_primary": "#1f2328",
+    "text_secondary": "#59636e",
+    "text_muted": "#8c959f",
+    "text_disabled": "#afb8c1",
+    "accent": "#d35400"
+  },
+  "semantic": {
+    "installed": "#1a7f37",
+    "update_available": "#9a6700",
+    "unmanaged": "#0969da",
+    "failed": "#cf222e",
+    "neutral": "#656d76",
+    "cached": "#8250df",
+    "active_download": "#0550ae"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "id": "garage-dark",
+    "name": "Garage Dark",
+    "author": "Antigravity Engineering",
+    "description": "Subtle 90s workshop aesthetic: deep charcoal slate, machined metal, and vintage rally amber.",
+    "version": "1.0.0",
+    "is_dark": true,
+    "is_builtin": true
+  },
+  "appearance": {
+    "density": "comfortable",
+    "font_scale": 1.0,
+    "corner_radius": 6
+  },
+  "colors": {
+    "background": "#131518",
+    "surface": "#1a1d21",
+    "surface_raised": "#23282f",
+    "surface_hover": "#2b313a",
+    "surface_active": "#323943",
+    "border": "#2d333b",
+    "border_subtle": "#22272e",
+    "border_strong": "#444c56",
+    "text_primary": "#e6edf3",
+    "text_secondary": "#8b949e",
+    "text_muted": "#656d76",
+    "text_disabled": "#484f58",
+    "accent": "#e58e26"
+  },
+  "semantic": {
+    "installed": "#2ecc71",
+    "update_available": "#e58e26",
+    "unmanaged": "#74b9ff",
+    "failed": "#e74c3c",
+    "neutral": "#8b949e",
+    "cached": "#a29bfe",
+    "active_download": "#00d2d3"
+  }
+}

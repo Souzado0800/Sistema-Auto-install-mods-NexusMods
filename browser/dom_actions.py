@@ -4,6 +4,8 @@ Supports modern Web Components and Shadow DOM (e.g. <mod-download-modal>, <mod-f
 Implements official flow detection without bypassing restrictions or skipping countdowns.
 """
 
+import json
+
 
 def get_check_challenges_js() -> str:
     """Detects Cloudflare challenges, CAPTCHAs, or login requirements across main DOM and Shadow DOM."""
@@ -75,77 +77,166 @@ def get_check_challenges_js() -> str:
 
 
 def get_click_manual_download_js(file_id: int | None = None) -> str:
-    """Locates and clicks the 'Manual' or 'Manual Download' button across standard and Shadow DOM."""
-    file_id_filter = f'"{file_id}"' if file_id else "null"
+    """
+    Locates and clicks the 'Manual' or 'Manual Download' button across standard and Shadow DOM.
+    Prioritizes:
+    1. Active Requirements modal confirmation button
+    2. 'Main files' section (#file-container-main-files, first file or matching file_id)
+    3. Direct file ID match across the document
+    4. Top header mod-download-modal (placement='mod_page')
+    5. General fallback across all DOM roots
+    """
+    target_id_json = json.dumps(str(file_id)) if file_id else "null"
     return f"""
     (() => {{
-        const targetFileId = {file_id_filter};
+        const targetFileId = {target_id_json};
 
-        function findInAllRoots(root, matcher) {{{{
+        function findInAllRoots(root, matcher) {{
             const queue = [root];
-            while (queue.length > 0) {{{{
+            while (queue.length > 0) {{
                 const current = queue.shift();
-                try {{{{
+                try {{
                     const elements = current.querySelectorAll("*");
-                    for (const el of elements) {{{{
+                    for (const el of elements) {{
                         const match = matcher(el);
                         if (match) return match;
-                        if (el.shadowRoot) {{{{
+                        if (el.shadowRoot) {{
                             queue.push(el.shadowRoot);
-                        }}}}
-                    }}}}
-                }}}} catch (e) {{{{}}}}
-            }}}}
+                        }}
+                    }}
+                }} catch (e) {{}}
+            }}
             return null;
-        }}}}
+        }}
 
         // 1. Requirements modal already open: click "Manual download" button
-        let target = findInAllRoots(document, el => {{{{
-            if (el.tagName === "BUTTON" || el.tagName === "A") {{{{
+        const reqModalButton = findInAllRoots(document, el => {{
+            if (el.tagName === "A" || el.tagName === "BUTTON") {{
+                const cls = (typeof el.className === "string") ? el.className : "";
                 const text = (el.textContent || "").trim().toLowerCase();
-                if (text === "manual download") {{{{
+                if (cls.includes("nxm-button-secondary-filled-strong") && text.includes("manual")) {{
                     return el;
-                }}}}
-            }}}}
+                }}
+                const parentDialog = el.closest && el.closest("dialog, .popup, .mfp-content, [role='dialog'], .modal");
+                if (parentDialog && (text === "manual download" || text === "download" || text.includes("manual download"))) {{
+                    return el;
+                }}
+            }}
             return null;
-        }}}});
+        }});
 
-        // 2. Direct file ID match (e.g. data-file-id or inside <mod-download-modal>)
-        if (!target && targetFileId) {{{{
-            target = findInAllRoots(document, el => {{{{
+        if (reqModalButton) {{
+            reqModalButton.click();
+            return {{ clicked: true, stage: "REQUIREMENTS_MODAL", target: reqModalButton.tagName, text: (reqModalButton.textContent || "").trim() }};
+        }}
+
+        // 2. MAIN FILES SECTION (Primary target when tab is on ?tab=files)
+        let mainFilesSection = document.getElementById("file-container-main-files");
+        if (!mainFilesSection) {{
+            const heading = Array.from(document.querySelectorAll("h1, h2, h3, h4, dt, .file-category-header, .accordion-name")).find(el => {{
+                const t = (el.textContent || "").trim().toLowerCase();
+                return t === "main files" || t.startsWith("main files");
+            }});
+            if (heading) {{
+                mainFilesSection = heading.closest(".files-tabs, .tabbed-section, .tab-files, .accordionitems") || heading.parentElement;
+            }}
+        }}
+
+        if (mainFilesSection) {{
+            // Expand any collapsed accordion item under Main files if present
+            const closedHeaders = mainFilesSection.querySelectorAll("dt.file-expander-header:not(.accopen)");
+            for (const h of closedHeaders) {{
+                try {{ h.click(); }} catch (e) {{}}
+            }}
+
+            // Look for mod-download-modal inside Main files
+            let mainModal = null;
+            if (targetFileId) {{
+                mainModal = Array.from(mainFilesSection.querySelectorAll("mod-download-modal")).find(m => {{
+                    const fileAttr = m.getAttribute("file") || "";
+                    const dataId = m.getAttribute("data-file-id") || m.getAttribute("data-id") || "";
+                    return fileAttr.includes(String(targetFileId)) || dataId === String(targetFileId);
+                }});
+            }}
+            if (!mainModal) {{
+                mainModal = mainFilesSection.querySelector("mod-download-modal");
+            }}
+
+            if (mainModal && mainModal.shadowRoot) {{
+                const btn = Array.from(mainModal.shadowRoot.querySelectorAll("button, a")).find(b => {{
+                    const t = (b.textContent || "").trim().toLowerCase();
+                    return t.includes("manual");
+                }});
+                if (btn) {{
+                    btn.click();
+                    return {{ clicked: true, stage: "MAIN_FILES_SHADOW_MODAL", target: btn.tagName, text: (btn.textContent || "").trim() }};
+                }}
+            }}
+
+            // Standard button inside Main files
+            const stdBtn = Array.from(mainFilesSection.querySelectorAll("button, a")).find(b => {{
+                const t = (b.textContent || "").trim().toLowerCase();
+                return t === "manual download" || t === "manual" || t.includes("manual download");
+            }});
+            if (stdBtn) {{
+                stdBtn.click();
+                return {{ clicked: true, stage: "MAIN_FILES_STANDARD", target: stdBtn.tagName, text: (stdBtn.textContent || "").trim() }};
+            }}
+        }}
+
+        // 3. Direct file ID match across the entire document / shadow roots
+        if (targetFileId) {{
+            const fileMatch = findInAllRoots(document, el => {{
                 const href = el.getAttribute("href") || "";
-                const dataId = el.getAttribute("data-file-id") || "";
+                const dataId = el.getAttribute("data-file-id") || el.getAttribute("data-id") || "";
                 const fileAttr = el.getAttribute("file") || "";
-                if (href.includes(`file_id=${{targetFileId}}`) || dataId === String(targetFileId) || fileAttr.includes(String(targetFileId))) {{{{
-                    if (el.shadowRoot) {{{{
-                        const subBtn = Array.from(el.shadowRoot.querySelectorAll("button, a")).find(b => (b.textContent||"").toLowerCase().includes("manual"));
+                if (href.includes(`file_id=${{targetFileId}}`) || dataId === String(targetFileId) || fileAttr.includes(String(targetFileId))) {{
+                    if (el.shadowRoot) {{
+                        const subBtn = Array.from(el.shadowRoot.querySelectorAll("button, a")).find(b => {{
+                            return (b.textContent || "").toLowerCase().includes("manual");
+                        }});
                         if (subBtn) return subBtn;
-                    }}}}
+                    }}
                     if (el.tagName === "BUTTON" || el.tagName === "A") return el;
-                }}}}
+                }}
                 return null;
-            }}}});
-        }}}}
+            }});
+            if (fileMatch) {{
+                fileMatch.click();
+                return {{ clicked: true, stage: "FILE_ID_MATCH", target: fileMatch.tagName, text: (fileMatch.textContent || "").trim() }};
+            }}
+        }}
 
-        // 3. General "Manual" or "Manual Download" button in document or shadow roots
-        if (!target) {{{{
-            target = findInAllRoots(document, el => {{{{
-                if (el.tagName === "BUTTON" || el.tagName === "A" || el.getAttribute("role") === "button") {{{{
-                    const text = (el.textContent || "").trim().toLowerCase();
-                    if (text === "manual" || text === "manual download" || text.includes("manual download")) {{{{
-                        return el;
-                    }}}}
-                }}}}
-                return null;
-            }}}});
-        }}}}
+        // 4. Header mod-download-modal (placement="mod_page")
+        const headerModal = document.querySelector("mod-download-modal[placement='mod_page'], mod-download-modal");
+        if (headerModal && headerModal.shadowRoot) {{
+            const btn = Array.from(headerModal.shadowRoot.querySelectorAll("button, a")).find(b => {{
+                const t = (b.textContent || "").trim().toLowerCase();
+                return t === "manual" || t.includes("manual");
+            }});
+            if (btn) {{
+                btn.click();
+                return {{ clicked: true, stage: "HEADER_MODAL", target: btn.tagName, text: (btn.textContent || "").trim() }};
+            }}
+        }}
 
-        if (target) {{{{
-            target.click();
-            return {{{{ clicked: true, target: target.tagName, text: (target.textContent || "").trim() }}}};
-        }}}}
+        // 5. General "Manual" or "Manual Download" button in document or shadow roots
+        const generalTarget = findInAllRoots(document, el => {{
+            if (el.tagName === "BUTTON" || el.tagName === "A" || el.getAttribute("role") === "button") {{
+                const text = (el.textContent || "").trim().toLowerCase();
+                if (text === "manual" || text === "manual download" || text.includes("manual download")) {{
+                    return el;
+                }}
+            }}
+            return null;
+        }});
 
-        return {{{{ clicked: false, error: "MANUAL_DOWNLOAD_NOT_FOUND" }}}};
+        if (generalTarget) {{
+            generalTarget.click();
+            return {{ clicked: true, stage: "GENERAL_FALLBACK", target: generalTarget.tagName, text: (generalTarget.textContent || "").trim() }};
+        }}
+
+        return {{ clicked: false, error: "MANUAL_DOWNLOAD_NOT_FOUND" }};
     }})()
     """
 

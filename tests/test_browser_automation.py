@@ -53,6 +53,17 @@ def test_manual_download_js_generation():
     js_general = get_click_manual_download_js(file_id=None)
     assert "null" in js_specific or "null" in js_general
     assert "manual download" in js_general.lower()
+    assert "main files" in js_general.lower()
+    assert "file-container-main-files" in js_general
+
+
+def test_main_files_section_handling():
+    js = get_click_manual_download_js(file_id=None)
+    assert "file-container-main-files" in js
+    assert "MAIN_FILES_SHADOW_MODAL" in js
+    assert "REQUIREMENTS_MODAL" in js
+    assert "MAIN_FILES_STANDARD" in js
+
 
 
 # ---------------------------------------------------------------------------

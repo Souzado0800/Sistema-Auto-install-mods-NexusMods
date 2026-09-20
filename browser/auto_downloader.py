@@ -203,17 +203,25 @@ class BrowserDownloadAutomator:
 
             # Step B & C: Robust multi-step interaction loop (Manual Download -> Requirements -> Slow Download)
             slow_clicked = False
-            for _ in range(10):
+            for step_idx in range(18):
                 # 1. Check if Slow Download is directly available (e.g. on file download page)
                 slow_res = await cdp_client.evaluate(get_click_slow_download_js())
                 if isinstance(slow_res, dict) and slow_res.get("clicked"):
                     slow_clicked = True
                     break
 
-                # 2. Otherwise, click Manual Download (handles initial button & requirements modal)
+                # 2. Otherwise, click Manual Download (handles Main files section & requirements modal)
                 manual_res = await cdp_client.evaluate(get_click_manual_download_js(file_id))
                 if isinstance(manual_res, dict) and manual_res.get("clicked"):
                     logger.info(f"CDP clicked Manual Download: {manual_res}")
+                    stage = manual_res.get("stage", "MANUAL_DOWNLOAD")
+                    btn_text = manual_res.get("text", "Manual download")
+                    if "MAIN_FILES" in stage:
+                        self.console.print(f"[dim]✓ Seção 'Main files' localizada: botão '{btn_text}' acionado via CDP.[/dim]")
+                    elif stage == "REQUIREMENTS_MODAL":
+                        self.console.print(f"[dim]✓ Confirmação de requisitos: botão '{btn_text}' acionado via CDP.[/dim]")
+                    else:
+                        self.console.print(f"[dim]✓ Botão '{btn_text}' acionado via CDP ({stage}).[/dim]")
 
                 await asyncio.sleep(1.5)
 

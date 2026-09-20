@@ -56,22 +56,22 @@ class ModFile(BaseModel):
     file_id: int
     mod_id: int
     game_domain: str
-    name: str
+    name: str = ""
     version: str | None = None
-    category_id: int = 1
-    category_name: str = "MAIN"
-    size_bytes: int = 0
-    size_kb: int = 0
-    file_name: str = ""
+    category_id: int | None = 1
+    category_name: str | None = "MAIN"
+    size_bytes: int | None = 0
+    size_kb: int | None = 0
+    file_name: str | None = ""
     md5: str | None = None
     sha256: str | None = None
     is_primary: bool = False
-    uploaded_timestamp: int = 0
+    uploaded_timestamp: int | None = 0
     description: str | None = None
 
     @property
     def is_main(self) -> bool:
-        return self.category_id == 1 or self.category_name.upper() == "MAIN"
+        return (self.category_id == 1) or bool(self.category_name and self.category_name.upper() == "MAIN")
 
 
 class DownloadLink(BaseModel):

@@ -50,6 +50,7 @@ class DependencyResolver:
         installation_repo: InstallationRepository | None = None,
         install_optional: bool = False,
         concurrency_limit: int = 8,
+        is_loader_installed: bool = False,
     ):
         self.api = api_client
         self.mod_repo = mod_repo
@@ -59,6 +60,7 @@ class DependencyResolver:
         self.graph = DependencyGraph()
         self.external_reqs: list[ParsedRequirement] = []
         self._processed_keys: set[CanonicalModKey] = set()
+        self.is_loader_installed = is_loader_installed
 
     async def resolve_plan(self, target_mods: list[NormalizedModUrl]) -> InstallationPlan:
         """Resolve all dependencies for the requested mods and build an InstallationPlan."""
@@ -139,6 +141,19 @@ class DependencyResolver:
             return node
 
         self._processed_keys.add(key)
+
+        # Special case: Mod loader (MSCLoader ID 147) detected on system
+        if key.game_domain == "mysummercar" and key.mod_id == 147 and self.is_loader_installed:
+            node = DependencyNode(
+                game_domain=key.game_domain,
+                mod_id=key.mod_id,
+                name="MSCLoader",
+                version="Detected",
+                is_requested=is_requested,
+                is_installed=True,
+            )
+            self.graph.add_node(node)
+            return node
 
         try:
             async with self.semaphore:
@@ -256,12 +271,18 @@ class DependencyResolver:
 
         except Exception as e:
             logger.error(f"Error resolving mod {key}: {e}")
+            is_inst = False
+            if self.inst_repo:
+                is_inst = self.inst_repo.is_installed(key.game_domain, key.mod_id)
+            if key.game_domain == "mysummercar" and key.mod_id == 147 and self.is_loader_installed:
+                is_inst = True
             # Create a placeholder node to preserve graph structure
             placeholder = DependencyNode(
                 game_domain=key.game_domain,
                 mod_id=key.mod_id,
                 name=f"Mod #{key.mod_id} (Unresolved)",
                 is_requested=is_requested,
+                is_installed=is_inst,
             )
             self.graph.add_node(placeholder)
             return placeholder

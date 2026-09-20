@@ -451,6 +451,7 @@ async def async_main(args: Any) -> int:
         installation_repo=inst_repo,
         install_optional=config.get("install_optional_dependencies", False),
         concurrency_limit=config.get("max_metadata_requests", 8),
+        is_loader_installed=bool(detected_env and detected_env.is_mscloader_present),
     )
 
     plan: InstallationPlan = await resolver.resolve_plan(collected_mods)
@@ -479,6 +480,10 @@ async def async_main(args: Any) -> int:
     console.print(f" [bold yellow]{cached_count}[/bold yellow] available in cache")
     console.print(f" [bold cyan]{downloads_required}[/bold cyan] downloads required\n")
 
+    msc_loader_node = next((n for n in plan.installation_order if n.mod_id == 147), None)
+    if msc_loader_node and msc_loader_node.is_installed and not msc_loader_node.is_requested:
+        console.print(" • [bold green]MSCLoader (Mod #147)[/bold green]: Dependência detectada e já instalada no sistema ([dim]download ignorado[/dim]).\n")
+
     # -------------------------------------------------------------------------
     # 8. Fast Idempotency Exit ("Nothing to do")
     # -------------------------------------------------------------------------
@@ -501,7 +506,8 @@ async def async_main(args: Any) -> int:
         return 0
 
     if target_mod_id and plan.installation_order:
-        tn = plan.installation_order[0]
+        target_nodes = [n for n in plan.installation_order if n.mod_id == target_mod_id]
+        tn = target_nodes[0] if target_nodes else plan.installation_order[0]
         console.print("\n[bold cyan]═══ TARGET MOD SPECIFICATION ═══[/bold cyan]")
         console.print(f" Mod Name .......... [bold]{tn.name or f'Mod #{tn.mod_id}'}[/bold]")
         console.print(f" Mod ID ............ [bold]{tn.mod_id}[/bold]")

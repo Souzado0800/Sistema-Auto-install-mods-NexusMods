@@ -149,21 +149,23 @@ class NexusApiClient:
         files: list[ModFile] = []
         raw_files = raw_data.get("files", [])
         for f in raw_files:
+            size_kb_val = f.get("size_kb") or 0
+            size_bytes_val = f.get("size_in_bytes") or (size_kb_val * 1024)
             mod_file = ModFile(
                 file_id=f["file_id"],
                 mod_id=mod_id,
                 game_domain=game_domain,
-                name=f.get("name", ""),
+                name=f.get("name") or "",
                 version=f.get("version"),
-                category_id=f.get("category_id", 1),
-                category_name=f.get("category_name", "MAIN"),
-                size_bytes=f.get("size_in_bytes", 0),
-                size_kb=f.get("size_kb", 0),
-                file_name=f.get("file_name", ""),
+                category_id=f.get("category_id") or 1,
+                category_name=f.get("category_name") or "MAIN",
+                size_bytes=size_bytes_val,
+                size_kb=size_kb_val,
+                file_name=f.get("file_name") or "",
                 md5=f.get("mod_version"),  # Nexus stores md5 or hash in file metadata if available
                 sha256=f.get("sha256"),
                 is_primary=bool(f.get("is_primary", False)),
-                uploaded_timestamp=f.get("uploaded_timestamp", 0),
+                uploaded_timestamp=f.get("uploaded_timestamp") or 0,
                 description=f.get("description"),
             )
             files.append(mod_file)

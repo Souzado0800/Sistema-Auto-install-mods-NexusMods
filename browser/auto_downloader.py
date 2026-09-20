@@ -46,6 +46,7 @@ class BrowserDownloadAutomator:
         self,
         mod_id: int | None,
         mod_name: str | None,
+        file_id: int | None = None,
     ) -> Path | None:
         """Checks if a matching archive is already present in downloads_dir or ./mods."""
         candidate_dirs = [self.downloads_dir, Path("mods")]
@@ -53,7 +54,7 @@ class BrowserDownloadAutomator:
             if d.is_dir():
                 for f in d.glob("*"):
                     if f.is_file() and f.suffix.lower() in (".zip", ".rar", ".7z", ".tar.gz"):
-                        if DownloadWatcher.is_matching_mod(f.name, mod_id, mod_name):
+                        if DownloadWatcher.is_matching_mod(f.name, mod_id, mod_name, file_id):
                             return f
         return None
 
@@ -70,7 +71,7 @@ class BrowserDownloadAutomator:
         CDP Semantic Automation -> Manual Browser Fallback -> Active Filesystem Watcher.
         """
         # 0. Check if file is already present
-        existing = self.find_existing_local_download(mod_id, mod_name)
+        existing = self.find_existing_local_download(mod_id, mod_name, file_id)
         if existing:
             self.console.print(f"[bold green]✓ Arquivo já presente localmente:[/bold green] [cyan]{existing.name}[/cyan]")
             return existing

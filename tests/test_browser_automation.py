@@ -105,6 +105,35 @@ def test_download_watcher_ignores_preexisting(tmp_downloads: Path):
     assert not watcher.is_new_or_modified(old_file)
 
 
+def test_is_matching_mod_exact_and_no_false_positives():
+    # 1. Official format exact matches
+    assert DownloadWatcher.is_matching_mod(
+        "Better Suspension for Hayosiko-1282-3-1-1759866518.zip", mod_id=1282, mod_name="Better Suspension"
+    )
+    assert DownloadWatcher.is_matching_mod(
+        "Colorful Gauges-30-4-0-0-1694595995.zip", mod_id=30, mod_name="Colorful Gauges"
+    )
+    assert DownloadWatcher.is_matching_mod(
+        "Dust clouds-128-3-1-1723460921.zip", mod_id=128, mod_name="Dust clouds"
+    )
+
+    # 2. Prevent false positives on timestamps/versions
+    # "Better Graphics-4103-2-0-1761421573.zip" contains "14", "10", "5", "176" inside numbers
+    bg = "Better Graphics-4103-2-0-1761421573.zip"
+    assert not DownloadWatcher.is_matching_mod(bg, mod_id=14, mod_name="Mo'Controls")
+    assert not DownloadWatcher.is_matching_mod(bg, mod_id=10, mod_name="Rally Spotlights")
+    assert not DownloadWatcher.is_matching_mod(bg, mod_id=5, mod_name="Fuel Tank Door")
+    assert not DownloadWatcher.is_matching_mod(bg, mod_id=176, mod_name="Tangerine FZ-120 Pickup")
+
+    # "SatsumaNewSound-591-1-0-1614787333.zip" must NOT match Mod 14, 5, 147, 333
+    sns = "SatsumaNewSound-591-1-0-1614787333.zip"
+    assert not DownloadWatcher.is_matching_mod(sns, mod_id=14, mod_name="Mo'Controls")
+    assert not DownloadWatcher.is_matching_mod(sns, mod_id=5, mod_name="Fuel Tank Door")
+    assert not DownloadWatcher.is_matching_mod(sns, mod_id=147, mod_name="MSCLoader")
+    assert not DownloadWatcher.is_matching_mod(sns, mod_id=333, mod_name="Garage Pit Covers")
+
+
+
 # ---------------------------------------------------------------------------
 # 6. .crdownload Detected & In-Progress Handling
 # ---------------------------------------------------------------------------

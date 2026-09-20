@@ -39,6 +39,7 @@ from browser import (
     AutoBrowserSource,
     BrowserDownloadAutomator,
     ClipboardSource,
+    DownloadWatcher,
     ManualURLSource,
     ModCollector,
     NormalizedModUrl,
@@ -550,7 +551,7 @@ async def async_main(args: Any) -> int:
         # Handle Free / Supporter tiers where Nexus API blocks automated CDN links
         missing_downloads = [
             node for node in plan.to_download
-            if not any(str(node.mod_id) in p.name or (node.file_id and str(node.file_id) in p.name) for p in downloaded_archives)
+            if not any(DownloadWatcher.is_matching_mod(p.name, node.mod_id, node.name, node.file_id) for p in downloaded_archives)
             and not file_store.get_cached_file(node.game_domain, node.mod_id, node.file_id or 0)
         ]
 
@@ -580,16 +581,14 @@ async def async_main(args: Any) -> int:
     for node in plan.installation_order:
         if node.is_installed:
             continue
-        matching = [p for p in downloaded_archives if str(node.mod_id) in p.name or (node.file_id and str(node.file_id) in p.name)]
+        matching = [p for p in downloaded_archives if DownloadWatcher.is_matching_mod(p.name, node.mod_id, node.name, node.file_id)]
         if not matching:
             # Check local candidate directories (~/Downloads and ./mods)
             for d in [Path("mods"), Path(os.path.expanduser("~/Downloads"))]:
                 if d.is_dir():
                     for arc_cand in d.glob("*.*"):
                         if arc_cand.suffix.lower() in (".zip", ".rar", ".7z", ".tar.gz"):
-                            cand_name_norm = arc_cand.name.lower().replace(" ", "").replace("_", "").replace("-", "")
-                            mod_name_norm = (node.name or "").lower().replace(" ", "").replace("_", "").replace("-", "")
-                            if str(node.mod_id) in arc_cand.name or (mod_name_norm and mod_name_norm in cand_name_norm):
+                            if DownloadWatcher.is_matching_mod(arc_cand.name, node.mod_id, node.name, node.file_id):
                                 matching = [arc_cand]
                                 break
                 if matching:

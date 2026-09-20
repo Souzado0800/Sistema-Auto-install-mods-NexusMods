@@ -1,0 +1,31 @@
+# Environment and sensitive configuration
+.env
+.env.*
+config.json
+
+# Python & testing
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Databases & local state
+data/
+*.sqlite
+*.sqlite3
+*.db
+*.bak
+_Backups/
+
+# Staging & logs
+*.log
+staging/
+downloads/
+
+# Build artifacts
+dist/
+build/
+*.spec
+.requirements.hash

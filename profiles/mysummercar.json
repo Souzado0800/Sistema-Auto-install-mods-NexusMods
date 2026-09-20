@@ -1,0 +1,14 @@
+{
+    "game": "mysummercar",
+    "display_name": "My Summer Car",
+    "mod_loader": "mscloader",
+    "mods_directory": "/home/souza/My Summer Car/Mods",
+    "archive_types": ["zip", "7z", "rar"],
+    "install_strategy": "mscloader",
+    "subfolder_mappings": {
+        "Mods": "",
+        "Assets": "Assets",
+        "Config": "Config"
+    },
+    "executable_hints": ["mysummercar.exe"]
+}

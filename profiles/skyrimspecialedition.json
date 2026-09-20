@@ -1,0 +1,11 @@
+{
+    "game": "skyrimspecialedition",
+    "display_name": "The Elder Scrolls V: Skyrim Special Edition",
+    "mods_directory": "Data",
+    "archive_types": ["zip", "7z", "rar"],
+    "install_strategy": "extract",
+    "subfolder_mappings": {
+        "Data": ""
+    },
+    "executable_hints": ["SkyrimSE.exe", "skse64_loader.exe"]
+}

@@ -1,0 +1,18 @@
+# Nexus Mods AutoInstaller - Sample URLs list
+# ----------------------------------------------------
+# Lines starting with '#' are ignored.
+# Duplicate URLs or different tabs of the same mod will be automatically deduplicated.
+
+# Main mod with dependencies
+https://www.nexusmods.com/skyrimspecialedition/mods/12604?tab=files
+https://www.nexusmods.com/skyrimspecialedition/mods/12604
+
+# Frameworks / Core mods
+https://www.nexusmods.com/skyrimspecialedition/mods/32444
+https://www.nexusmods.com/skyrimspecialedition/mods/17230
+
+# UI mod
+https://www.nexusmods.com/skyrimspecialedition/mods/2014
+
+# Cyberpunk mod
+https://www.nexusmods.com/cyberpunk2077/mods/107

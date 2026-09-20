@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AutoInstallModMySummerCar
+GenericName=MSC Mod Installer
+Comment=Autonomous Nexus Mods installer and dependency resolver for My Summer Car
+Exec=bash -c "cd '/home/souza/.gemini/antigravity/scratch/NexusAutoInstaller' && ./run.sh; echo ''; read -p 'Press Enter to exit...' dummy"
+Icon=system-software-install
+Path=/home/souza/.gemini/antigravity/scratch/NexusAutoInstaller
+Terminal=true
+Categories=Game;Utility;
+Keywords=nexus;mods;mysummercar;mscloader;autoinstall;
+StartupNotify=true

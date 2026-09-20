@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nexus-autoinstaller"
+version = "1.0.0"
+description = "High-performance, secure, official-compliant mod manager and dependency resolver for Nexus Mods"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "NexusAutoInstaller Team" }]
+dependencies = [
+    "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+    "rich>=13.7.0",
+    "psutil>=5.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.4.0",
+]
+
+[project.scripts]
+nexus-autoinstaller = "app:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "UP"]
+ignore = ["UP047", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"AutoInstallModMySummerCar.py" = ["E402"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]

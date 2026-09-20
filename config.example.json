@@ -1,0 +1,19 @@
+{
+    "nexus_api_key": "",
+    "game": "mysummercar",
+    "game_domain": "mysummercar",
+    "mod_loader": "mscloader",
+    "mods_directory": "/home/souza/My Summer Car/Mods",
+    "profile": "mysummercar",
+    "max_metadata_requests": 8,
+    "max_downloads": 4,
+    "max_extractions": 2,
+    "retry_attempts": 3,
+    "cache_ttl": 3600,
+    "install_optional_dependencies": false,
+    "backup_existing_files": true,
+    "verify_hashes": true,
+    "resume_downloads": true,
+    "browser_cdp_url": "http://127.0.0.1:9222",
+    "data_dir": "data"
+}

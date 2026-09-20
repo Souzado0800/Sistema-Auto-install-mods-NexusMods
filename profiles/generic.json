@@ -1,0 +1,9 @@
+{
+    "game": "generic",
+    "display_name": "Generic Game Profile",
+    "mods_directory": "mods",
+    "archive_types": ["zip", "tar", "7z"],
+    "install_strategy": "extract",
+    "subfolder_mappings": {},
+    "executable_hints": []
+}

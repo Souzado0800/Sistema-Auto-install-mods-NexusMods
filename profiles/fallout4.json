@@ -1,0 +1,11 @@
+{
+    "game": "fallout4",
+    "display_name": "Fallout 4",
+    "mods_directory": "Data",
+    "archive_types": ["zip", "7z", "rar"],
+    "install_strategy": "extract",
+    "subfolder_mappings": {
+        "Data": ""
+    },
+    "executable_hints": ["Fallout4.exe", "f4se_loader.exe"]
+}

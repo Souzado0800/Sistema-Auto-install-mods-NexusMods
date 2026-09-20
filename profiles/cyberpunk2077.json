@@ -1,0 +1,14 @@
+{
+    "game": "cyberpunk2077",
+    "display_name": "Cyberpunk 2077",
+    "mods_directory": "",
+    "archive_types": ["zip", "7z", "rar"],
+    "install_strategy": "extract",
+    "subfolder_mappings": {
+        "archive": "archive",
+        "bin": "bin",
+        "r6": "r6",
+        "red4ext": "red4ext"
+    },
+    "executable_hints": ["Cyberpunk2077.exe"]
+}

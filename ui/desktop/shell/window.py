@@ -73,10 +73,12 @@ class MainWindow(Adw.ApplicationWindow):
 
         # Main horizontal workspace (Sidebar + Content Stack)
         workspace = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        workspace.set_hexpand(True)
         workspace.set_vexpand(True)
 
         # Sidebar
         self.sidebar = AppSidebar(on_page_changed=self._on_sidebar_navigate)
+        self.sidebar.set_hexpand(False)
         workspace.append(self.sidebar)
 
         # Content Stack

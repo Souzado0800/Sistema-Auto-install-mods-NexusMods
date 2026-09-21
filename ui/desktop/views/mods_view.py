@@ -95,8 +95,9 @@ class ModsView(Gtk.Box):
         th.append(lbl_src)
 
         lbl_st = Gtk.Label(label="STATUS")
-        lbl_st.set_size_request(130, -1)
-        lbl_st.set_xalign(1.0)
+        lbl_st.set_size_request(120, -1)
+        lbl_st.set_xalign(0.5)
+        lbl_st.set_margin_end(8)
         th.append(lbl_st)
 
         self.table_card.append(th)

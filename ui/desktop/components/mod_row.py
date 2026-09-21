@@ -84,8 +84,9 @@ class ModRow(Gtk.Box):
 
         # 4. Status Badge
         badge = StatusBadge(mod.status)
-        badge.set_size_request(130, -1)
-        badge.set_halign(Gtk.Align.END)
+        badge.set_size_request(120, -1)
+        badge.set_margin_end(8)
+        badge.set_halign(Gtk.Align.CENTER)
         self.append(badge)
 
         # Click gesture

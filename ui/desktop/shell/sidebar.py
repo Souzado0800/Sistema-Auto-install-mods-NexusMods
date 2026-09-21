@@ -70,7 +70,8 @@ class AppSidebar(Gtk.Box):
     def __init__(self, on_page_changed: Callable[[str], None]):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         self.add_css_class("sidebar")
-        self.set_size_request(200, -1)
+        self.set_size_request(220, -1)
+        self.set_hexpand(False)
         self.on_page_changed = on_page_changed
 
         self.items: dict[str, SidebarItem] = {}
